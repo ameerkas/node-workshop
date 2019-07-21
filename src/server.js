@@ -11,7 +11,33 @@ server.listen(3000, function () {
 function handler (request, response) {
     var endpoint = request.url;
     var method = request.method;
-    if (endpoint === '/') {
+    console.log(endpoint);
+
+     if(endpoint.indexOf('.')!== -1){
+        const extention = endpoint.split('.')[1];
+        const extentionType = { 
+        html: ' text/html',
+        css:'text/css',
+        js:'application/javascript',
+        icon: 'image/x-icon',
+        jpg :'image/jpeg'
+        }
+        const filepath=path.join(__dirname,'../public',endpoint);
+        fs.readFile(filepath,(error,file)=>
+        {
+            if(error){
+                console.log(error);
+                response.writeHead(500,{'Content-type':extentionType.html})
+                response.end('<h1>We have error</h1>')
+            }
+            else {
+                response.writeHead(200,{'Content-type':extentionType[extention]});
+                response.end(file);
+            }
+        })   
+    }
+
+    else if (endpoint === '/') {
         const filepath=path.join(__dirname,'..','public','index.html');
         fs.readFile(filepath, function(error, file)  {
          if (error) {
